@@ -1,0 +1,4 @@
+Sample                   #Reads    Average   
+./data/sample1.fq.gz     1000      19.84     
+./data/sample2.fq.gz     1000      19.26     
+./data/sample3.fq.gz     1000      19.07     
