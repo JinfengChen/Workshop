@@ -515,8 +515,9 @@
       +SRR504360.72 HWUSI-EAS502:2:1:3:1744 length=38
       BBB???@?BB>CBCCCBB@>@A:B
       ```
-
       ---
+      # demo      
+
       ```shell
       mkdir data
       cd data
@@ -538,9 +539,8 @@
               length_total += length_read
           length_mean  = float(length_total)/len(read_len)
       return length_mean
-
       ```
-   
+
       ```shell
       $ python demo.py ./data
       $ cat demo.sum
@@ -548,10 +548,11 @@
       ./data/sample1.fq.gz     1000      19.84     
       ./data/sample2.fq.gz     1000      19.26     
       ./data/sample3.fq.gz     1000      19.07     
-      ```
-      
-      ---    
+      ``` 
 
+      ---
+
+      
       ```shell
       #!/usr/bin/python
       import os
@@ -566,7 +567,7 @@
           length_total += length_read
           length_mean  = float(length_total)/len(read_len)
           return length_mean
-
+      
       ofile = open('demo.sum', 'w')
       print >> ofile, '%-25s%-10s%-10s' %('Sample', '#Reads', 'Average')
       for file_name in sorted(files):
@@ -583,7 +584,7 @@
                       read_len.append(len(line))
                       read_num += 1
               print >> ofile, '%-25s%-10d%-10.2f' %(file_name, read_num, mean(read_len))
-      ofile.close()
+      ofile.close() 
       ```
 
     </textarea>
