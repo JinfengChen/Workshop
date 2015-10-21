@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+   
+      # I/O, Directories and Files
+      
+      1. Input and Output from program
+ 
+      2. Passing arguments through command line
+
+      3. Getting files in directories
+ 
+      4. Reading and writing files
+      
+      5. A script summarize fastq files in one directory
+
+
+
+      Python IO slides
+      [http://jinfengchen.github.io/Workshop/Python/Python_IO.html#1](http://jinfengchen.github.io/Workshop/Python/Python_IO.html#1)
+
+      ???
+      1. Three question marks split slide content with notes
+      2. save to pdf by printer, set printer horizontal printing and do not print header and note
+      ---
+
+
+      # Keyboard input and printing
+      
+      ```shell
+      #!/usr/bin/python
+
+      str = raw_input("Enter your string: ")
+      print 'Received input is : %s' %(str)
+     
+      num = raw_input("Enter your number: ")
+      print 'Received number is : %s' %(num)
+      ```
+      
+      ```shell 
+      $ python keyboard.py
+      Enter your input: testing
+      Received input is :  testing
+      Enter you number: 100
+      Received number is : 100
+      ```
+      
+      Format String:
+
+      <img src="image/format_string_value_set.png" height="100px" width="700px" /> 
+  
+      http://www.python-course.eu/python3_formatted_output.php
+      ---
+ 
+      # Formated printing of string and number
+
+      ```shell
+      $ cat print.txt
+      Gene    Length  P-value
+      Os01g00010      1205    0.01020200
+      Os03g02020      3520    0.95292029
+      Os05g10240      400     0.05299200
+
+      $ cat print_formated.txt
+      Gene        Length    P-value   
+      Os01g00010  1205      0.01      
+      Os03g02020  3520      0.95      
+      Os04g10240  400       0.05 
+      ```
+
+      ```shell
+      print '%-12s%-10s%-10s' %('Gene', 'Length', 'P-value')
+      print '%-12s%-10d%-10.2f' %('Os01g00010', 1205, 0.01020200)
+      print '%-12s%-10d%-10.2f' %('Os03g02020', 3520, 0.95292029)
+      print '%-12s%-10d%-10.2f' %('Os04g10240', 400, 0.05299200)
+      ```
+     
+      %[flags][width][.precision]type 
+ 
+      ---
+ 
+      #Formated printing of integer
+
+      ```shell
+      #!/usr/bin/python
+      test = raw_input("Enter your input integer: ");
+      test = test.rstrip()
+      print "Received input is %5d: " %(int(test))
+      print "Received input is %10d: " %(int(test))
+      print "Received input is %-10d: " %(int(test))
+      print "Received input is %010d: " %(int(test))
+      ```
+   
+      ```shell
+      $ python print.py
+      Enter your input integer: 2000
+      Received input is  2000: 
+      Received input is       2000: 
+      Received input is 2000      : 
+      Received input is 0000002000:  
+      ```
+
+      ---
+
+      # Use format function to format output string
+
+      ```shell    
+      print '%-12s%-10d%-10.2f' %('Os01g00010', 1205, 0.01020200)
+      #Os01g00010  1205      0.01
+
+      x = '{a:<12s}{b:<10d}{c:<10.2f}'.format(a='Os01g00010', b=1205, c=0.01020200)
+      print x
+      #Os01g00010  1205      0.01
+    
+      x = '{0:<12s}{1:<10d}{2:<10.2f}'.format('Os01g00010', 1205, 0.01020200)
+      print x
+      #Os01g00010  1205      0.01 
+      ```
+      ---
+    
+      Write a script to ask you one type of fruit and its price. Print the information to screen in one sentence.
+      ```shell
+      $ python fruit.py
+      input fruit: apple
+      input price: 2.56/2.560,2.567
+      #The price of apple is 2.56 per pound.
+      ```
+ 
+      Write a script to help you calculate the price of fruits 
+      1. the script ask you input three information of fruits: fruit type, pounds, price per pound
+      2. you can input as many fruit as you can, finally the script will give the amount of payment
+
+      ```shell
+      while True:
+          #do something here
+          if raw_input('Continue? Yes or No: ') == 'No':
+              break
+      ```
+
+      ---
+
+      # Passing parameters to program through command line
+
+      Default values of command line parameters
+
+      ```shell
+      #!/usr/bin/python
+      import sys
+
+      print 'the value of sys.argv[0] is : %s' %(sys.argv[0])
+      print 'the value of sys.argv[1] is : %s' %(sys.argv[1])
+      ```
+     
+      ```shell
+      $ python argv.py 5
+      the value of sys.argv[0] is : argv.py
+      the value of sys.argv[1] is : 5
+      ```
+ 
+      ---
+  
+      # Passing parameters to program through command line
+
+      Use class argparse
+
+      ```shell
+      #!/usr/bin/python
+      import argparse
+
+      parser = argparse.ArgumentParser()
+      parser.add_argument('-i', '--input', type=int, default='1')
+      parser.add_argument('--verbose', action='store_true')
+      args = parser.parse_args()
+
+      print 'the input parameter is : %s' %(args.input)
+      if args.verbose:
+          print 'verbose set to true'
+      ```
+ 
+      ```shell
+      $ python argps.py --input 5
+      the input parameter is : 5
+      
+      $ python argps.py --verbose
+      verbose set to true
+      ```
+
+      ---
+     
+      # Getting files from directory, glob
+
+      ```shell
+      #!/usr/bin/python
+      import os
+      import glob
+      import sys
+
+      files = glob.glob('%s/*.txt' %(sys.argv[1]))
+
+      for file_name in sorted(files):
+          print 'filename: %s' %(file_name)
+      ``` 
+      
+      ```shell
+      $ python read_dir.py ./
+      filename: ./ofile.txt
+      filename: ./print.txt
+      filename: ./print_formated.txt
+      filename: ./process_line.txt 
+      ```
+
+      ---
+
+      # Getting files from directory, listdir
+
+      ```shell
+      #!/usr/bin/python
+      import os
+      from fnmatch import fnmatch
+      import sys
+
+      files = os.listdir(sys.argv[1])
+
+      for file_name in sorted(files):
+          if fnmatch(file_name, '*.txt'):
+              print 'filename: %s' %(file_name)
+      ```
+   
+      ```shell
+      $ python read_dir_ls.py ./
+      filename: ofile.txt
+      filename: print.txt
+      filename: print_formated.txt
+      filename: process_line.txt 
+      ```
+      ---
+
+      # Operation on file path
+     
+      ```shell
+      $ echo "fasta" > test.fa
+      $ python
+      import os
+
+      files = 'test.fa'
+      files = os.path.abspath(files)
+      files                     #workshop/Python/test.fa
+      os.path.dirname(files)    #workshop/Python
+      os.path.basename(files)   #test.fa
+      os.path.split(files)      #('workshop/Python', 'test.fa')
+      os.path.splitext(files)   #('workshop/Python/test', '.txt')
+      ```
+
+      ---
+
+      # Operation on file
+
+      ```shell
+      import os
+      import time
+      
+      files = 'test.fa'
+      os.path.exists(files)     #ture, false
+      os.path.isfile(files)     #ture, false
+      os.path.islink(files)     #true, false
+      os.path.getsize(files)    #70
+      time.ctime(os.path.getmtime(files))   #'Sun Oct 11 19:50:14 2015'
+      time.ctime(os.path.getctime(files))   #'Sun Oct 11 19:50:51 2015'
+      os.rename(files, '%s.new_file' %(files))      
+      os.remove('%s.new_file' %(files))
+      ```
+
+      ---
+      Write a script to list specific type of files in folder and output file name and size.
+
+      1. give the folder through command line agrument
+      2. output file name and file size to screen
+
+      ---
+ 
+      # File IO: File object returned by open function
+
+      File object = open (file_name [, access_mode] [, buffering])
+
+          * access_mode
+            r: Opens a file for reading only
+            w: Opens a file for writing only
+            a: Opens a file for appending
+
+          * buffering
+            0: unbuffered
+            1: line buffered
+            positive value: buffering of N bytes
+            nagetive value: system default
+
+      ```shell
+      infile  = open ('infilename.txt', 'r')
+      #reading
+      infile.close()
+
+      with open ('infilename.txt', 'r') as infile
+      #reading    
+ 
+      outfile = open ('outfilename.txt', 'w')
+      #writing
+      outfile.close() 
+      ```
+
+      ---
+
+      # Reading from file
+      
+      ```shell
+      $ python
+      fh = open('print.txt', 'r')
+      #read all lines from file
+      fh.read()
+      #read one line
+      fh.seek(0)
+      fh.readline()
+      #read all lines
+      fh.seek(0)
+      fh.readlines()
+      #loops
+      fh.seek(0)
+      for line in fh:
+          print line
+      fh.close()
+      ```
+
+      ---
+
+      # Reading and writing file
+
+      ```shell
+      #!/usr/bin/python
+      import os
+      import sys
+
+      try:
+          os.path.isfile(sys.argv[1])
+      except:
+          print 'no file specified, try python read_file.py 1.fq'
+          sys.exit()
+ 
+      filehd = open (sys.argv[1], 'r')
+      for line in filehd:
+          line = line.rstrip()
+          print 'reading line: %s' %(line)
+      filehd.close()
+
+      ofile = open('file.out', 'w')
+      with open (sys.argv[1], 'r') as filehd:
+          for line in filehd:
+              line = line.rstrip()
+              print >> ofile, 'writing line: %s' %(line)  
+      ofile.close() 
+      ```
+
+      ---
+       
+      # Processing lines in txt files
+     
+      ```shell
+      $ cat process_line.txt
+      biology,100
+      microbiology,20
+      entomology,80
+      ```
+  
+      ```shell
+      #!/usr/bin/python
+      import os
+      import sys
+      import re
+
+      try:
+          os.path.isfile(sys.argv[1])
+      except:
+          print 'no file specified, try python process_line.py process_line.txt'
+          sys.exit()
+ 
+      with open (sys.argv[1], 'r') as filehd:
+          for line in filehd:
+              line = line.rstrip()
+              word = re.split(r',', line)
+              print 'the first word of line is: %s' %(word[0])  
+      ```
+   
+      ```shell
+      $ python process_line.py process_line.txt
+      biology
+      microbiology
+      entomology
+      ```
+      
+      
+      ---
+ 
+      # Work with compressed files
+
+      ```shell
+      $ cat file.txt
+      testing1 biology
+      testing2 microbilogy
+      testing3 entomology
+      $ gzip file.txt
+      $ zcat file.txt.gz
+      testing1 biology
+      testing2 microbilogy
+      testing3 entomology
+      $ gunzip file.txt.gz
+      ```
+      
+      ```shell
+      #!/usr/bin/python 
+      import gzip
+    
+      with gzip.open('file.txt.gz', 'rb') as gfile:
+          with gzip.open('ofile.txt.gz', 'wb') as ofile:
+              for line in gfile:
+                  line = line.rstrip()
+                  print >> ofile, line
+      ```
+
+      ---
+
+      # A real project to summarize number and length of read in fastq files
+
+      1. project directory: workshop/python/data
+
+      2. samples: workshop/python/data/sample1.fq, sample2,fq, sample3.fq
+
+      3. reads from the fastq files were trimmed with length vary from 15-31 nt
+
+      4. summarize the number of reads and average length in each sample
+
+      ```shell
+      @SRR504360.63 HWUSI-EAS502:2:1:2:1892 length=38
+      ACATCGACCAGAAATTT
+      +SRR504360.63 HWUSI-EAS502:2:1:2:1892 length=38
+      BC>BBB>BB>>A>BBA@
+      @SRR504360.72 HWUSI-EAS502:2:1:3:1744 length=38
+      GATAGGGTTTTGAACAAACGGCTA
+      +SRR504360.72 HWUSI-EAS502:2:1:3:1744 length=38
+      BBB???@?BB>CBCCCBB@>@A:B
+      ```
+
+      ---
+      ```shell
+      mkdir data
+      cd data
+      wget https://github.com/JinfengChen/Workshop/blob/master/Python/data/sample1.fq.gz
+      wget https://github.com/JinfengChen/Workshop/blob/master/Python/data/sample2.fq.gz
+      wget https://github.com/JinfengChen/Workshop/blob/master/Python/data/sample3.fq.gz
+      ```
+
+      ```shell
+      #!/usr/bin/python
+      import os
+      from fnmatch import fnmatch
+      import sys
+      import gzip
+
+      def mean(read_len):
+          length_total = 0
+          for length_read in read_len:
+              length_total += length_read
+          length_mean  = float(length_total)/len(read_len)
+      return length_mean
+
+      ```
+   
+      ```shell
+      $ python demo.py ./data
+      $ cat demo.sum
+      Sample                   #Reads    Average   
+      ./data/sample1.fq.gz     1000      19.84     
+      ./data/sample2.fq.gz     1000      19.26     
+      ./data/sample3.fq.gz     1000      19.07     
+      ```      
+
+
+    </textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
