@@ -158,6 +158,31 @@
 
       ---
 
+      ```shell
+      fruit = raw_input('input fruit:')
+      price = raw_input('input price:')
+      print 'The price of %s is %5.2f' %(fruit, float(price))
+
+      ```
+
+      ```shell
+      total = []
+      while True:
+          fruit = raw_input('Enter fruit type: ')
+          pount = int(raw_input('how many pounts: '))
+          price = float(raw_input('price per pount: '))
+          total.append([fruit, pount, price])
+          if raw_input('Continue? Yes or No: ') == 'N':
+              break
+
+      payment = 0
+      for item in total:
+          payment += item[1]*price
+      print 'Total payment: %5.1f' %(payment)
+      ```
+
+      ---
+
       # Passing parameters to program through command line
 
       Default values of command line parameters
@@ -301,6 +326,24 @@
       filename: ./print.txt; size: 100
       filename: ./print_formated.txt; size: 83
       filename: ./process_line.txt; size: 42
+      ```
+
+      ---
+  
+      ```shell
+      #!/usr/bin/python
+      import os
+      import glob
+      import sys
+
+      try:
+          files = glob.glob('%s/*.txt' %(sys.argv[1]))
+      except:
+          print 'no diretory specified, try python read_dir.py ../data/'
+          sys.exit()
+ 
+      for file_name in sorted(files):
+          print 'filename: %s; size: %s' %(file_name, os.path.getsize(file_name)) 
       ```
 
       ---
@@ -506,7 +549,40 @@
       ./data/sample2.fq.gz     1000      19.26     
       ./data/sample3.fq.gz     1000      19.07     
       ```      
+    
+      ```shell
+      #!/usr/bin/python
+      import os
+      from fnmatch import fnmatch
+      import sys
+      import gzip
+      from numpy import *
 
+      def mean(read_len):
+          length_total = 0
+          for length_read in read_len:
+          length_total += length_read
+          length_mean  = float(length_total)/len(read_len)
+          return length_mean
+
+      ofile = open('demo.sum', 'w')
+      print >> ofile, '%-25s%-10s%-10s' %('Sample', '#Reads', 'Average')
+      for file_name in sorted(files):
+      file_name = '%s/%s' %(sys.argv[1], file_name)
+          if fnmatch(file_name, '*.fq.gz'):
+              read_num = 0
+              read_len = []
+              line_num = 0
+              with gzip.open (file_name, 'r') as fq_file:
+                  for line in fq_file:
+                  line = line.rstrip()
+                  line_num += 1
+                  if line_num%4 == 2:
+                      read_len.append(len(line))
+                      read_num += 1
+              print >> ofile, '%-25s%-10d%-10.2f' %(file_name, read_num, mean(read_len))
+      ofile.close()
+      ```
 
     </textarea>
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">

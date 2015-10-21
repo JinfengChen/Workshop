@@ -3,13 +3,20 @@ import os
 from fnmatch import fnmatch
 import sys
 import gzip
-from numpy import *
+#from numpy import *
 
 try:
     files = os.listdir(sys.argv[1])
 except:
     print 'no diretory specified, try python demo.py ./data/'
     sys.exit()     
+
+def mean(read_len):
+    length_total = 0
+    for length_read in read_len:
+        length_total += length_read
+    length_mean  = float(length_total)/len(read_len)
+    return length_mean
 
 ofile = open('demo.sum', 'w')
 print >> ofile, '%-25s%-10s%-10s' %('Sample', '#Reads', 'Average')
