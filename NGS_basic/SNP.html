@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Title</title>
+    <title>SNP Calling</title>
     <meta charset="utf-8">
     <style>
       @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
@@ -21,9 +21,11 @@
 
    
       # Introduction to SNP calling
+
+      Steps
       
       1. Preprocess raw illumina reads
-         * base quality
+         * Evaluate base quality
  
          * adapter comtamination
 
@@ -79,16 +81,21 @@
 
       ```
 
-      Filter the raw reads by Trimmomatic or Sickle:
+      ---
+     # Filter the raw reads by Trimmomatic or Sickle:
       
       * Trimmomatic can deal with adapter comtamination and low quality
-      
-      * Sickler can deal with low quality
 
+      ```bash
+      $ EXAMPLE!
+      ```
+      * Sickle can deal with low quality
+      ```shell
+      $EXAMPLE
+      ```
 
       ---
-
-      Read mapping using BWA
+      # Read mapping using BWA
    
       ```shell
       #mapping
@@ -96,12 +103,16 @@
       $ bwa aln ref.fq read1.fa > aln1.sai
       $ bwa aln ref.fq read2.fa > aln2.sai
       $ bwa sampe ref.fa aln1.sai aln2.sai read1.fq read2.fq > aln.sam
-
+      ```
+      ---
+      # Explain sorting
+      
       #sorting
+      ```shell
       $ module load samtools
       $ samtools view -bS -o aln.raw.bam aln.sam
       $ samtools sort aln.raw.bam aln.sort
-
+      ```
       #mark duplicate
       $ java -jar MarkDuplicates.jar \
         ASSUME_SORTED=TRUE \
