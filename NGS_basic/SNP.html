@@ -31,7 +31,7 @@
 
          * Trimmomatic/sickle
 
-      2. Reads mapping and quality control
+      2. Read mapping and quality control
          * mapping
 
          * sorting
@@ -95,6 +95,13 @@
       ```
 
       ---
+      #Challenges with paired end reads
+
+      * How to deal with trimmimg/filtering with PE data
+      * How to do/use PE info in mapping reads
+      * (find some graphics of this, how to place paired reads)
+      
+      ---
       # Read mapping using BWA
    
       ```shell
@@ -104,6 +111,21 @@
       $ bwa aln ref.fq read2.fa > aln2.sai
       $ bwa sampe ref.fa aln1.sai aln2.sai read1.fq read2.fq > aln.sam
       ```
+
+      ---
+      #SAM/BAM format
+      __S__equence __A__lignment/__M__apping format.
+
+      * Storing alignments as BLAST format is not efficient, short
+      read data needed a simpler and more compact format.
+      * [SAM specification](https://samtools.github.io/hts-specs/SAMv1.pdf)
+
+      * BAM is a compressed and binary version of SAM, but they contain
+      same information.
+
+      * Files can be unsorted, sorted by read name, or sorted by genomic
+      location
+      
       ---
       # Explain sorting
       
@@ -113,6 +135,8 @@
       $ samtools view -bS -o aln.raw.bam aln.sam
       $ samtools sort aln.raw.bam aln.sort
       ```
+      
+      ---
       #mark duplicate
       $ java -jar MarkDuplicates.jar \
         ASSUME_SORTED=TRUE \
@@ -145,9 +169,7 @@
       http://qualimap.bioinfo.cipf.es
 
       ---
-
-
-      Call SNP using GATK toolkit
+      # Call SNPs using GATK toolkit
 
       ```shell
       $ java -Xmx1g -jar GenomeAnalysisTK.jar \
