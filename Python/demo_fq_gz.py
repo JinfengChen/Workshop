@@ -3,14 +3,6 @@ import os
 from fnmatch import fnmatch
 import sys
 import gzip
-from numpy import *
-
-try:
-    files = os.listdir(sys.argv[1])
-except:
-    print 'no diretory specified, try python demo.py ./data/'
-    sys.exit()     
-
 ofile = open('demo.sum', 'w')
 print >> ofile, '%-25s%-10s%-10s' %('Sample', '#Reads', 'Average')
 for file_name in sorted(files):
