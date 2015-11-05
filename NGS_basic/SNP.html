@@ -20,68 +20,70 @@
     <textarea id="source">
 
    
-      # Introduction to SNP calling
+      # Introduction to performing SNP calling
 
       Steps
       
-      1. Preprocess raw illumina reads
-         * Evaluate base quality
+      1. Preprocess raw sequence reads (Focusing on Illumina technology)
+         * Evaluate base quality (FastQC)
  
-         * adapter comtamination
+         * Test for adapter contamination (FastQC)
 
-         * Trimmomatic/sickle
+         * Trim reads for quality and length (Trimmomatic/sickle)
 
       2. Read mapping and quality control
-         * mapping
+         * Align reads with mapping software
 
-         * sorting
+         * Convert and sort alignment files
 
-         * mark PCR duplicate
+         * Mark PCR duplicates
 
-         * BWA, Samtools, Picard
+         * Tools: BWA, Samtools, Picard
 
-      3. SNP calling with GATK
+      3. SNP calling with the GATK
  
 
-      [http://jinfengchen.github.io/Workshop/NGS_basic/SNP.html#1](http://jinfengchen.github.io/Workshop/NGS_basic/SNP.html#1)
+      Tutorial webpage: http://jinfengchen.github.io/Workshop/NGS_basic/SNP.html
 
       ---
-
-      Example of low quality sequence:
+      #Examples of low quality sequence
 
       <img src="images/Bad_quality_fq.png" height="500px" width="700px" /> 
   
       http://www.bioinformatics.babraham.ac.uk/projects/fastqc
  
       ---
-     
-      Example of high quality sequence:
+      #Example of high quality sequence
       
       <img src="images/Good_quality_fq.png" height="500px" width="700px" /> 
  
       http://www.bioinformatics.babraham.ac.uk/projects/fastqc 
 
       ---
-
-      Adapter comtamination:
+      #Adapter contamination
 
       <img src="images/Adapter_comtamination.png" height="500px" width="700px" /> 
  
       http://www.bioinformatics.babraham.ac.uk/projects/fastqc
 
       ---
- 
-      Quality control by Fastqc:
+      #Adapter sequence identified
+    
+      <img src="images/Adaper_table.png" width="750px" />
+   
+      http://www.bioinformatics.babraham.ac.uk/projects/fastqc
+
+      ---
+      #Quality control by FastQC
       
       ```shell
       $ module load fastqc
 
       $ fastqc -o ./ -f fastq ../reads/read1.fastq ../reads/read2.fastq 
-
       ```
 
       ---
-      # Filter the raw reads by Trimmomatic or Sickle:
+      #Filter raw reads by Trimmomatic or Sickle:
       
       * Trimmomatic can deal with adapter comtamination and low quality
 
@@ -119,7 +121,6 @@
       $ bwa aln ref.fq read2.fa > aln2.sai
       $ bwa sampe ref.fa aln1.sai aln2.sai read1.fq read2.fq > aln.sam
       ```
-
       ---
       #SAM/BAM format
       __S__equence __A__lignment/__M__apping format.
@@ -145,7 +146,13 @@
       ```
       
       ---
-      #mark duplicate
+      #Mark Duplicate read pairs
+      These can be created by PCR artifacts. We know they are
+      duplicates because the forward and reverse sequences match
+      another pair perfectly which are also are same forward and
+      reverse.
+      
+      ```bash
       $ java -jar MarkDuplicates.jar \
         ASSUME_SORTED=TRUE \
         REMOVE_DUPLICATES=TRUE \
@@ -153,8 +160,20 @@
         INPUT=aln.sort.bam \
         OUTPUT=aln.bam \
         METRICS_FILE=aln.dupli
+      ```
+      ---
+      #Add ReadGroup tags
+      (Jinfeng explain what these tags are for / what they mean - see
+      if it is in the SAM Spec)
+      ReadGroups are for labeling the samples with information about
+      the source and procedures that generated the sequence.
+      * RGID = ReadGroup ID - the Unique ID of the Sample isolate seq run
+      * RGSM = ReadGroup Sample - the Sample name
+      * RGPL ...
+      * RGPU ...
 
-      #add readgroup
+      
+      ```shell
       $ java -jar AddOrReplaceReadGroups.jar \
         INPUT=aln.bam \
         OUTPUT=aln.rg.bam \
@@ -165,17 +184,24 @@
         RGPL=Illumina \
         RGPU=Genomic \
         RGSM=Rice01 VALIDATION_STRINGENCY=SILENT
-
       ```
 
       ---
-
-      Quality control on alignment file:
+      #Quality control &amp; stats on alignment (BAM) file
      
       <img src="images/screenshot_bamqc_summary.png" height="500px" width="700px" /> 
 
       http://qualimap.bioinfo.cipf.es
 
+      ---
+      #Text version of the summary stats
+
+      ```shell
+      $ samtools flagstat aln.bam
+      ... # put the output here!
+      ```
+      
+      
       ---
       # Call SNPs using GATK toolkit
 
