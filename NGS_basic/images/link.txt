@@ -1,0 +1,3 @@
+
+paired_end: https://en.wikipedia.org/wiki/DNA_nanoball_sequencing
+
