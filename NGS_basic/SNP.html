@@ -74,8 +74,8 @@
       http://www.bioinformatics.babraham.ac.uk/projects/fastqc
 
       ---
-      #Quality control by FastQC
-     
+      # Quality control by FastQC
+      
       Options:
 
         -o --outdir: directory for all output of fastqc run
@@ -83,21 +83,29 @@
         -f --format: format of files, fastq/bam/sam
 
         -c --contaminants: sequence file in the form name[tab]sequence
- 
+      ```text
 
       ```shell
       $ module load fastqc
  
       $ fastqc -o ./ -f fastq -c adapter.fa read1.fastq read2.fastq
+
+      $ ls read1.fastq_*
+      read_1.fq_fastqc.zip
+      read_1.fq_fastqc:
+      Icons  Images  fastqc_data.txt  fastqc_report.html  summary.txt
       ```
 
       ---
       #Filter raw reads by Trimmomatic:
       
       * Trimmomatic can deal with adapter comtamination and low quality
+
         SLIDINGWINDOW:4:15, Scan the read with a 4 bp sliding window 
            cutting when the average quality per base drops below 15
+
         ILLUMINACLIP:adapter.fa:2:40:15, Cut adapter sequences from the read
+
         MINLEN:40, Drop the read if it is below a specified length
 
       ```bash
@@ -108,7 +116,7 @@
       ```
 
       ---
-      Filter raw reads by Sickle    
+      # Filter raw reads by Sickle    
  
       * Sickle can deal with low quality
 
@@ -140,13 +148,13 @@
       #Challenges with paired-end reads
 
       * How to deal with trimming/filtering with paired-end data
-        - trim low quality base/adapter sequence/read length
+        - trim low quality base/adapter sequence/read length in each single read file
         - keep these reads with both reads passed trimming/filtering in paired-end fastq files
       * How to use the paired-end information in reads mapping
         - map each reads seperately and keep all mapped coordinates in the genome
         - identify corrdinates that best for both pairs (mapping quality score)
 
-        <img src="images/paired_end.png" height="200px" width="300px" />
+        <img src="images/paired_end.png" height="250px" width="400px" />
         
       ---
   
@@ -172,7 +180,7 @@
 
       mapping with bwa mem, long reads (70bp-1Mb) and higher error rate reads
 
-      ```
+      ```shell
       $ bwa mem ref.fa read1.fq read2.fq > aln.sam
       ```
 
@@ -195,9 +203,13 @@
       # Explain sorting
    
       samtools view Options:
+
         -b, output bam format file
+
         -S, input is sam format
+
         -o, output filename 
+
       samtools sort INPUT OUTPUT_PREFIX
 
       sorting
@@ -246,10 +258,10 @@
         SORT_ORDER=coordinate \
         CREATE_INDEX=true \
         RGID=Rice01 \
-        RGLB=RiceLib1 \
+        RGLB=Rice3k \
         RGPL=Illumina \
-        RGPU=Genomic \
-        RGSM=Rice01 VALIDATION_STRINGENCY=SILENT
+        RGPU=ATGGGC \
+        RGSM=Rice VALIDATION_STRINGENCY=SILENT
       ```
 
       ---
@@ -257,14 +269,19 @@
       # Quality control &amp; stats on alignment (BAM) file
      
       Options:
+
         -bam, input bam file
+
         -nt, number of threads
+
         -outformat, output file format of summary report
+
         --java-mem-size=2G, maximum memory for java
           
 
       ```shell
       qualimap bamqc -bam aln.rg.bam --java-mem-size=2G -nt 1 -outformat PDF 
+
       ```
   
       ---     
