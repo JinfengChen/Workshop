@@ -356,6 +356,8 @@
 
       # Run SNP/INDEL calling with GATK HaplotypeCaller
 
+      [How HaplotypeCaller works](https://www.broadinstitute.org/gatk/guide/topic?name=methods)
+
       HaplotypeCaller Option:
 
         --genotypeing_mode, Specifies how to determine the alternate alleles to use for genotyping
@@ -537,6 +539,14 @@
       Examples for practice
  
       [https://github.com/JinfengChen/Workshop/raw/master/NGS_basic/G220_SNP.tar.gz](https://github.com/JinfengChen/Workshop/raw/master/NGS_basic/G220_SNP.tar.gz)
+
+      ```shell
+      wget https://github.com/JinfengChen/Workshop/raw/master/NGS_basic/G220_SNP.tar.gz
+      uz G220_SNP.tar.gz
+      cd G220
+      qsub step0.index.sh
+      
+      ```
 
     </textarea>
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
