@@ -493,7 +493,44 @@
       527	ALL.gatk.snp.1.vcf.gz (98.7%)	ALL.gatk.snp.2.vcf.gz (98.3%)	\
       ALL.gatk.snp.raw.vcf.gz (97.1%)  
       ```
+      ---  
+   
+      # SNP density along chromosome
 
+      We want to investigate whether the SNPs were equally distributed along chromosomes
+      or they showed any signature of enrichment in speicfic regions
+
+      ```shell
+      module load vcfools
+      vcftools --vcf dbSNP.vcf --out testing_vcf --SNPdensity 10000
+      cat testing_density.R | R --slave
+      ```
+      testing_vcf.snpden.pdf 
+       
+      <img src="images/SNP_density.png" height="400px" width="600px" /> 
+
+      ---
+
+      # From SNP to phylogeny
+
+      * convert vcf to tab format
+
+      * convert tab to alignment in fasta format
+
+      * phylogentic analysis 
+
+      ```shell
+      module load vcftools 
+      vcf-to-tab < dbSNP.vcf > dbSNP.tab
+      perl vcf_tab_to_fasta_alignmentv1.pl -i dbSNP.tab 
+      ```
+
+      ```shell
+      $ more dbSNP.tab
+      #CHROM	POS	REF	HEG4_0	HEG4_1	HEG4_2	HEG4_2-5kb
+      Chr1	31071	A	G/G	G/G	G/G	G/G
+      Chr1	31478	C	T/T	T/T	T/T	T/T
+      ```
 
     </textarea>
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
