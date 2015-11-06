@@ -348,6 +348,8 @@
 
         -I, input bam file
 
+        -V, input varient VCF file
+
         -o, output filename
 
         -nct, number of thread
@@ -368,9 +370,7 @@
 
       ```shell
       $ java -Xmx1g -jar GenomeAnalysisTK.jar \
-      -T HaplotypeCaller \
-      -R $genome \
-      -I $BAM \
+      -T HaplotypeCaller -R $genome -I $BAM \
       -o $prefix.gatk.raw.vcf \
       -nct $cpu \
       --genotyping_mode DISCOVERY \
@@ -404,8 +404,6 @@
       # Filter low quality SNP by hardfilter
 
       Options:
-
-        -V, input varient VCF file
 
         --filterExpression, One or more expression used with INFO fields to filter
 
