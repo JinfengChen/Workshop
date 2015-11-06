@@ -74,8 +74,8 @@
       http://www.bioinformatics.babraham.ac.uk/projects/fastqc
 
       ---
-      #Quality control by FastQC
-     
+      # Quality control by FastQC
+      
       Options:
 
         -o --outdir: directory for all output of fastqc run
@@ -83,21 +83,29 @@
         -f --format: format of files, fastq/bam/sam
 
         -c --contaminants: sequence file in the form name[tab]sequence
- 
+
 
       ```shell
       $ module load fastqc
  
       $ fastqc -o ./ -f fastq -c adapter.fa read1.fastq read2.fastq
+
+      $ ls read1.fastq_*
+      read_1.fq_fastqc.zip
+      read_1.fq_fastqc:
+      Icons  Images  fastqc_data.txt  fastqc_report.html  summary.txt
       ```
 
       ---
       #Filter raw reads by Trimmomatic:
       
-      * Trimmomatic can deal with adapter comtamination and low quality
+      Trimmomatic can deal with adapter comtamination and low quality
+
         SLIDINGWINDOW:4:15, Scan the read with a 4 bp sliding window 
            cutting when the average quality per base drops below 15
+
         ILLUMINACLIP:adapter.fa:2:40:15, Cut adapter sequences from the read
+
         MINLEN:40, Drop the read if it is below a specified length
 
       ```bash
@@ -108,24 +116,25 @@
       ```
 
       ---
-      Filter raw reads by Sickle    
+      # Filter raw reads by Sickle    
  
-      * Sickle can deal with low quality
+      Sickle can deal with low quality
 
-      Options:
-        -f, --pe-file1: forward reads fastq file
+        Options:
 
-        -r, --pe-file2: reverse reads fastq file
+          -f, --pe-file1: forward reads fastq file
 
-        -o, --output-pe1: trimmed forward fastq file
+          -r, --pe-file2: reverse reads fastq file
 
-        -p, --output-pe2: trimmed reverse fastq file
+          -o, --output-pe1: trimmed forward fastq file
 
-        -s, --output-single: trimmed unpaired fastq file
+          -p, --output-pe2: trimmed reverse fastq file
 
-        -q, --qual-threshold: threshold for trimming
+          -s, --output-single: trimmed unpaired fastq file
 
-        -l, --length-threshold: threshold for read length after trimming
+          -q, --qual-threshold: threshold for trimming
+
+          -l, --length-threshold: threshold for read length after trimming
 
 
       ```shell
@@ -140,14 +149,16 @@
       #Challenges with paired-end reads
 
       * How to deal with trimming/filtering with paired-end data
-        - trim low quality base/adapter sequence/read length
+        - trim low quality base/adapter sequence/read length in each single read file
         - keep these reads with both reads passed trimming/filtering in paired-end fastq files
       * How to use the paired-end information in reads mapping
         - map each reads seperately and keep all mapped coordinates in the genome
         - identify corrdinates that best for both pairs (mapping quality score)
 
         <img src="images/paired_end.png" height="200px" width="300px" />
-        
+          
+        https://en.wikipedia.org/wiki/DNA_nanoball_sequencing
+
       ---
   
       The GATK Best Practices workflows for SNP/INDEL calling
@@ -172,7 +183,7 @@
 
       mapping with bwa mem, long reads (70bp-1Mb) and higher error rate reads
 
-      ```
+      ```shell
       $ bwa mem ref.fa read1.fq read2.fq > aln.sam
       ```
 
@@ -192,13 +203,33 @@
       location
       
       ---
+
+      # Example of SAM format
+      
+      <img src="images/SAM_example.png" height="400px" width="600px" /> 
+  
+      https://samtools.github.io/hts-specs/SAMv1.pdf
+
+      ---
+      # Explain SAM format
+ 
+      <img src="images/SAM.png" height="300px" width="650px" />
+     
+      https://samtools.github.io/hts-specs/SAMv1.pdf
+
+      ---
+
       # Explain sorting
    
-      samtools view Options:
+      * samtools view Options:
+
         -b, output bam format file
+
         -S, input is sam format
+
         -o, output filename 
-      samtools sort INPUT OUTPUT_PREFIX
+
+      * samtools sort INPUT OUTPUT_PREFIX
 
       sorting
 
@@ -246,10 +277,10 @@
         SORT_ORDER=coordinate \
         CREATE_INDEX=true \
         RGID=Rice01 \
-        RGLB=RiceLib1 \
+        RGLB=Rice3k \
         RGPL=Illumina \
-        RGPU=Genomic \
-        RGSM=Rice01 VALIDATION_STRINGENCY=SILENT
+        RGPU=ATGGGC \
+        RGSM=Rice VALIDATION_STRINGENCY=SILENT
       ```
 
       ---
@@ -257,17 +288,22 @@
       # Quality control &amp; stats on alignment (BAM) file
      
       Options:
+
         -bam, input bam file
+
         -nt, number of threads
+
         -outformat, output file format of summary report
+ 
         --java-mem-size=2G, maximum memory for java
           
 
       ```shell
       qualimap bamqc -bam aln.rg.bam --java-mem-size=2G -nt 1 -outformat PDF 
+
       ```
-  
-      ---     
+
+      ---
 
       # Overview of summary stats of bam file
   
@@ -276,10 +312,12 @@
       http://qualimap.bioinfo.cipf.es
 
       ---
+
       # Text version of the summary stats
 
       ```shell
       $ samtools flagstat aln.bam
+
       391506 + 0 in total (QC-passed reads + QC-failed reads)
       0 + 0 duplicates
       389349 + 0 mapped (99.45%:-nan%)
@@ -296,18 +334,36 @@
       
       ---
       # Call SNPs using GATK toolkit
-    
+   
+      The Genome Analysis Toolkit (GATK) is a software package for analysis of
+      high-throughput sequencing data. The toolkit offers a wide variety of tools, 
+      with a primary focus on variant discovery and genotyping as well as 
+      strong emphasis on data quality assurance.
+ 
       GATK Options:
+
         -T, name of tool to use 
+
         -R, reference genome, need to have *.dict
+
         -I, input bam file
+
         -o, output filename
+
         -nct, number of thread
 
+      ---
+
+      # Run SNP/INDEL calling with GATK HaplotypeCaller
+
       HaplotypeCaller Option:
+
         --genotypeing_mode, Specifies how to determine the alternate alleles to use for genotyping
+
         -stand_call_conf, The minimum phred-scaled confidence threshold at which variants should be called
+
         -stand_emit_conf, The minimum phred-scaled confidence threshold at which variants should be emitted
+
 
       ```shell
       $ java -Xmx1g -jar GenomeAnalysisTK.jar \
@@ -318,13 +374,12 @@
       -nct $cpu \
       --genotyping_mode DISCOVERY \
       -stand_call_conf 30 \
-      -stand_emit_conf 10 \ 
-
+      -stand_emit_conf 10
       ```
 
-      --- 
+      ---
 
-      Extract SNP and INDEL from raw variant calls
+      # Extract SNP and INDEL from raw variant calls
 
       ```shell
       $ java -Xmx1g -jar GenomeAnalysisTK.jar \
@@ -345,20 +400,36 @@
 
       ---
 
-      Filter low quality SNP by hardfilter
+      # Filter low quality SNP by hardfilter
 
       Options:
+
         -V, input varient VCF file
+
         --filterExpression, One or more expression used with INFO fields to filter
+
           QualByDepth (QD), the variant confidence (from the QUAL field) divided 
                             by the unfiltered depth of non-reference samples
-          FisherStrand (FS), Phred-scaled p-value using Fisher's Exact Test to detect strand bias
-          RMSMappingQuality (MQ), the Root Mean Square of the mapping quality of the reads across all samples
-          MappingQualityRankSumTest (MQRankSum), the Mann-Whitney Rank Sum Test for mapping qualities between 
-                           reads with ref bases vs. those with the alternate allele. 
-          ReadPosRankSumTest (ReadPosRankSum), the Mann-Whitney Rank Sum Test for the distance from the end 
-                           of the read for reads with the alternate allele.
+
+          FisherStrand (FS), Phred-scaled p-value using Fisher's Exact Test to 
+                            detect strand bias
+
+          RMSMappingQuality (MQ), the Root Mean Square of the mapping quality
+                             of the reads across all samples
+
+          MappingQualityRankSumTest (MQRankSum), the Mann-Whitney Rank Sum Test 
+                             for mapping qualities between reads with ref bases 
+                             vs. those with the alternate allele. 
+
+          ReadPosRankSumTest (ReadPosRankSum), the Mann-Whitney Rank Sum Test 
+                             for the distance from the end of the read for 
+                             reads with the alternate allele.
+
         --filterName, Names to use for the list of filters
+
+      ---
+
+      # Run hardfilter
 
       ```shell
       $ java -Xmx1g -jar GenomeAnalysisTK.jar \
@@ -374,11 +445,13 @@
 
       ---
        
-      Filter SNP overlapping with repeat sequence
+      # Filter SNP overlapping with repeat sequence
   
       Options:
+
         --mask, Any variant which overlaps entries from the provided mask rod will be filtered
                 BED, VCF 
+
         --maskName, The text to put in the FILTER field if a 'mask' rod is provided
  
       ```shell
@@ -395,14 +468,16 @@
       Alternative approach for filter SNP with bedtools
 
       ```shell
-      bedtools intersect -a $prefix.gatk.snp.pass.vcf -b $repeat -v > $prefix.gatk.snp.pass.repeat.vcf
-      bedtools window -w 100 -a $prefix.gatk.snp.pass.vcf -b $repeat -v > $prefix.gatk.snp.pass.repeat.vcf 
+      bedtools intersect -a $prefix.gatk.snp.pass.vcf -b $repeat -v \
+        > $prefix.gatk.snp.pass.repeat.vcf
+      bedtools window -w 100 -a $prefix.gatk.snp.pass.vcf -b $repeat -v \
+        > $prefix.gatk.snp.pass.repeat.vcf 
       ```
           
 
       ---
 
-      Compare the results from different VCF files
+      # Compare the results from different VCF files
 
       ```shell
       $ module load vcftools
@@ -419,15 +494,6 @@
       ALL.gatk.snp.raw.vcf.gz (97.1%)  
       ```
 
-      ---
-
-      Workflow of variant calling
-
-      <img src="images/BP_workflow_3s.png" height="400px" width="600px" />
-
-      [Recommended workflows for variant discovery analysis with GATK](https://www.broadinstitute.org/gatk/guide/topic?name=tutorials)    
-  
-      ---
 
     </textarea>
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
