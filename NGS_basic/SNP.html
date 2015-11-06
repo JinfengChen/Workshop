@@ -77,6 +77,7 @@
       #Quality control by FastQC
      
       Options:
+
         -o --outdir: directory for all output of fastqc run.
         -f --format: format of files, fastq/bam/sam. 
         -c --contaminants: sequence file in the form name[tab]sequence 
@@ -97,12 +98,16 @@
         MINLEN:40, Drop the read if it is below a specified length
 
       ```bash
-      $ java -classpath trimmomatic-0.30.jar org.usadellab.trimmomatic.TrimmomaticPE -phred33 \
-        read1.fastq read2.fastq read1.trim.fq read1.trim.unpaired.fq read2.trim.fq read2.trim.unpaired.fq \
-        SLIDINGWINDOW:4:15 ILLUMINACLIP:adapter.fa:2:40:15 MINLEN:40
+      $ java -classpath trimmomatic-0.30.jar org.usadellab.trimmomatic.TrimmomaticPE \
+         -phred33 read1.fastq read2.fastq read1.trim.fq read1.trim.unpaired.fq \
+         read2.trim.fq read2.trim.unpaired.fq \
+         SLIDINGWINDOW:4:15 ILLUMINACLIP:adapter.fa:2:40:15 MINLEN:40
       ```
 
+      ---
+     
       * Sickle can deal with low quality
+
       Options:
         -f, --pe-file1: forward reads fastq file
         -r, --pe-file2: reverse reads fastq file
@@ -111,18 +116,18 @@
         -s, --output-single: trimmed unpaired fastq file
         -q, --qual-threshold: threshold for trimming
         -l, --length-threshold: threshold for read length after trimming
+
       ```shell
       $ module load sickle
 
-      $ sickle pe -f read1.fastq -r read2.fastq -o read1.trim.fq -p read2.trim.fq -s read.unpaired.trim.fq -t sanger -q 20 -l 50
+      $ sickle pe -f read1.fastq -r read2.fastq -o read1.trim.fq -p read2.trim.fq \
+        -s read.unpaired.trim.fq -t sanger -q 20 -l 50
       ```
 
       ---
+
       #Challenges with paired-end reads
 
-      * Why we need paired-end reads
-        - resovling repeat sequence in genome
-        - splicing junction in RNA transcripts
       * How to deal with trimming/filtering with paired-end data
         - trim low quality base/adapter sequence/read length
         - keep these reads with both reads passed trimming/filtering in paired-end fastq files
@@ -144,21 +149,25 @@
 
       # Read mapping using BWA
    
-      #mapping with bwa aln, short reads (less than 100 bp) and high accurate reads
+      mapping with bwa aln, short reads (less than 100 bp) and high accurate reads
+
       ```shell
       $ module load bwa
       $ bwa index ref.fa
       $ bwa aln ref.fa read1.fq > aln1.sai
       $ bwa aln ref.fa read2.fq > aln2.sai
       $ bwa sampe ref.fa aln1.sai aln2.sai read1.fq read2.fq > aln.sam
-      
-      #mapping with bwa mem, long reads (70bp-1Mb) and higher error rate reads
+      ```
+
+      mapping with bwa mem, long reads (70bp-1Mb) and higher error rate reads
+
       ```
       $ bwa mem ref.fa read1.fq read2.fq > aln.sam
       ```
 
       ---
-      #SAM/BAM format
+
+      # SAM/BAM format
       __S__equence __A__lignment/__M__apping format.
 
       * Storing alignments as BLAST format is not efficient, short
@@ -180,7 +189,8 @@
         -o, output filename 
       samtools sort INPUT OUTPUT_PREFIX
 
-      #sorting
+      sorting
+
       ```shell
       $ module load samtools
       $ samtools view -bS -o aln.raw.bam aln.sam
@@ -188,7 +198,9 @@
       ```
       
       ---
-      #Mark Duplicate read pairs
+
+      # Mark Duplicate read pairs
+
       These can be created by PCR artifacts. We know they are
       duplicates because the forward and reverse sequences match
       another pair perfectly which are also are same forward and
@@ -203,8 +215,10 @@
         OUTPUT=aln.bam \
         METRICS_FILE=aln.dupli
       ```
+
       ---
-      #Add ReadGroup tags
+
+      # Add ReadGroup tags
 
       ReadGroups are for labeling the samples with information about
       the source and procedures that generated the sequence.
@@ -228,7 +242,8 @@
       ```
 
       ---
-      #Quality control &amp; stats on alignment (BAM) file
+
+      # Quality control &amp; stats on alignment (BAM) file
      
       Options:
         -bam, input bam file
@@ -250,7 +265,7 @@
       http://qualimap.bioinfo.cipf.es
 
       ---
-      #Text version of the summary stats
+      # Text version of the summary stats
 
       ```shell
       $ samtools flagstat aln.bam
