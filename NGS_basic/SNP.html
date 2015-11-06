@@ -78,9 +78,12 @@
      
       Options:
 
-        -o --outdir: directory for all output of fastqc run.
-        -f --format: format of files, fastq/bam/sam. 
-        -c --contaminants: sequence file in the form name[tab]sequence 
+        -o --outdir: directory for all output of fastqc run
+
+        -f --format: format of files, fastq/bam/sam
+
+        -c --contaminants: sequence file in the form name[tab]sequence
+ 
 
       ```shell
       $ module load fastqc
@@ -89,7 +92,7 @@
       ```
 
       ---
-      #Filter raw reads by Trimmomatic or Sickle (Focused on paired-end reads):
+      #Filter raw reads by Trimmomatic:
       
       * Trimmomatic can deal with adapter comtamination and low quality
         SLIDINGWINDOW:4:15, Scan the read with a 4 bp sliding window 
@@ -105,17 +108,25 @@
       ```
 
       ---
-     
+      Filter raw reads by Sickle    
+ 
       * Sickle can deal with low quality
 
       Options:
         -f, --pe-file1: forward reads fastq file
+
         -r, --pe-file2: reverse reads fastq file
+
         -o, --output-pe1: trimmed forward fastq file
+
         -p, --output-pe2: trimmed reverse fastq file
+
         -s, --output-single: trimmed unpaired fastq file
+
         -q, --qual-threshold: threshold for trimming
+
         -l, --length-threshold: threshold for read length after trimming
+
 
       ```shell
       $ module load sickle
